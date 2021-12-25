@@ -1,3 +1,4 @@
+import { useRef, useState } from 'react';
 import { ArrowBackIosOutlined, ArrowForwardIosOutlined } from '@material-ui/icons';
 import styled from 'styled-components';
 import MovieItem from './MovieItem';
@@ -48,12 +49,27 @@ const MovieContainer = styled.div`
 `;
 
 const MovieList = () => {
+  const [ slideNumber, setSlideNumber] = useState(0); 
+  const listRef = useRef();
+
+  const handleClick = (direction) => {
+    let distance = listRef.current.getBoundingClientRect().x - 50;
+    if (direction === "left" && slideNumber > 0) {
+      setSlideNumber(slideNumber - 1);
+      listRef.current.style.transform = `translateX(${230 + distance}px)`;
+    }
+    if (direction === "right" && slideNumber < 5) {
+      setSlideNumber(slideNumber + 1);
+      listRef.current.style.transform = `translateX(${-230 + distance}px)`;
+    }
+  };
+
   return (
     <ListContainer>
       <Title>Continue to watch</Title>
       <Wrapper>
-        <ArrowBackIosOutlined className="sliderArrow left" />
-        <MovieContainer>
+        <ArrowBackIosOutlined className="sliderArrow left" onClick={() => handleClick("left")} />
+        <MovieContainer ref={listRef}>
           <MovieItem index={0} />
           <MovieItem index={1} />
           <MovieItem index={2} />
@@ -65,7 +81,7 @@ const MovieList = () => {
           <MovieItem index={8} />
           <MovieItem index={9} />
         </MovieContainer>
-        <ArrowForwardIosOutlined className="sliderArrow right" />
+        <ArrowForwardIosOutlined className="sliderArrow right" onClick={() => handleClick("right")} />
       </Wrapper>
     </ListContainer>
   );
